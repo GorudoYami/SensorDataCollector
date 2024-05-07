@@ -15,8 +15,6 @@
             app:destination="@id/mainActivity" />
     </fragment>
 
-=
-
     <fragment
         android:id="@+id/navigation_settings"
         android:name="pl.polsl.sensordatacollector.ui.notifications.NotificationsFragment"
@@ -25,6 +23,7 @@
         <action
             android:id="@+id/action_navigation_settings_to_mainActivity2"
             app:destination="@id/mainActivity2" />
+    </fragment>
 
     <activity
         android:id="@+id/mainActivity"
