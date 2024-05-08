@@ -3,6 +3,7 @@ package pl.polsl.sensordatacollector
 import android.os.Bundle
 import android.widget.Button
 import android.graphics.Color
+import android.hardware.SensorManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -20,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        listener = SensorsListener(getSystemService(SENSOR_SERVICE) as SensorManager)
         var x = 1;
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -31,11 +33,13 @@ class MainActivity : AppCompatActivity() {
                 button.setBackgroundColor(Color.parseColor("#00FF00"));
                 button.setText("START");
                 x++;
+                listener.stop()
             }
             else {
                 button.setBackgroundColor(Color.parseColor("#FF0000"));
                 button.setText("STOP");
                 x--;
+                listener.start()
             }
         }
 
