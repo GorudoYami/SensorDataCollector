@@ -10,10 +10,13 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import pl.polsl.sensordatacollector.databinding.ActivityMainBinding
+import pl.polsl.sensordatacollector.sensors.SensorsListener
+import java.util.EventListener
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var listener: SensorsListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
