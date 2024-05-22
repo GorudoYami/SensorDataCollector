@@ -9,30 +9,13 @@
         android:id="@+id/navigation_home"
         android:name="pl.polsl.sensordatacollector.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_navigation_home_to_mainActivity"
-            app:destination="@id/mainActivity" />
-    </fragment>
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_settings"
         android:name="pl.polsl.sensordatacollector.ui.notifications.NotificationsFragment"
         android:label="@string/title_settings"
-        tools:layout="@layout/fragment_notifications" >
-        <action
-            android:id="@+id/action_navigation_settings_to_mainActivity2"
-            app:destination="@id/mainActivity2" />
-    </fragment>
+        tools:layout="@layout/fragment_notifications" />
 
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="pl.polsl.sensordatacollector.MainActivity"
-        android:label="MainActivity" />
-
-    <activity
-        android:id="@+id/mainActivity2"
-        android:name="pl.polsl.sensordatacollector.MainActivity2"
-        android:label="MainActivity2"/>
 
 </navigation>
