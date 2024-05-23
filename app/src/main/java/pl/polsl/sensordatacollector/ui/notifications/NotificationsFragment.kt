@@ -47,12 +47,16 @@ class NotificationsFragment : Fragment() {
         val editTextDatabaseName: EditText = binding.editTextDatabaseName
         val editTextLogin: EditText = binding.editTextLogin
         val editTextPassword: EditText = binding.editTextPassword
+        val editTextName: EditText = binding.editTextName
+        val editTextSurname: EditText = binding.editTextSurname
         val spinnerGroup: Spinner = binding.spinnerGroup
 
         editor.putString("database_address", editTextDatabaseAddress.text.toString())
         editor.putString("database_name", editTextDatabaseName.text.toString())
         editor.putString("login", editTextLogin.text.toString())
         editor.putString("password", editTextPassword.text.toString())
+        editor.putString("name", editTextName.text.toString())
+        editor.putString("surname", editTextSurname.text.toString())
         editor.putString("selected_group", spinnerGroup.selectedItem.toString())
 
         editor.apply()
@@ -65,12 +69,17 @@ class NotificationsFragment : Fragment() {
         val editTextDatabaseName: EditText = binding.editTextDatabaseName
         val editTextLogin: EditText = binding.editTextLogin
         val editTextPassword: EditText = binding.editTextPassword
+        val editTextName: EditText = binding.editTextName
+        val editTextSurname: EditText = binding.editTextSurname
         val spinnerGroup: Spinner = binding.spinnerGroup
 
         editTextDatabaseAddress.setText(sharedPreferences.getString("database_address", ""))
         editTextDatabaseName.setText(sharedPreferences.getString("database_name", ""))
         editTextLogin.setText(sharedPreferences.getString("login", ""))
         editTextPassword.setText(sharedPreferences.getString("password", ""))
+        editTextName.setText(sharedPreferences.getString("name", ""))
+        editTextSurname.setText(sharedPreferences.getString("surname", ""))
+
 
         val options = arrayOf("Group 1", "Group 2", "Group 3")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, options)
