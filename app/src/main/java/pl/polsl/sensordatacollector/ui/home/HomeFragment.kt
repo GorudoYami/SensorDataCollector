@@ -1,8 +1,10 @@
 package pl.polsl.sensordatacollector.ui.home
 
+import android.content.Intent
 import android.graphics.Color
 import android.hardware.SensorManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import pl.polsl.sensordatacollector.R
 import pl.polsl.sensordatacollector.databinding.FragmentHomeBinding
 import pl.polsl.sensordatacollector.sensors.SensorsListener
+import pl.polsl.sensordatacollector.services.DataCollectingService
 
 class HomeFragment : Fragment() {
 
@@ -51,15 +54,29 @@ class HomeFragment : Fragment() {
                 button.setBackgroundColor(Color.parseColor("#00FF00"))
                 button.setText("START")
                 listener.stop()
+                stopService()
             } else {
                 button.setBackgroundColor(Color.parseColor("#FF0000"))
                 button.setText("STOP")
                 listener.start()
+                startService()
             }
             isListening = !isListening
         }
 
         return root
+    }
+
+    private fun startService() {
+        Log.d("DataCollectingService", "Starting")
+        val context = activity?.applicationContext
+        context?.startService(Intent(context, DataCollectingService::class.java))
+    }
+
+    private fun stopService() {
+        Log.d("DataCollectingService", "Stopping")
+        val context = activity?.applicationContext
+        context?.stopService(Intent(context, DataCollectingService::class.java))
     }
 
     override fun onDestroyView() {

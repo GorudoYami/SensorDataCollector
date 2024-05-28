@@ -12,7 +12,6 @@ import pl.polsl.sensordatacollector.databinding.ActivityMainBinding
 import pl.polsl.sensordatacollector.sensors.SensorsListener
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
     private lateinit var listener: SensorsListener
 
