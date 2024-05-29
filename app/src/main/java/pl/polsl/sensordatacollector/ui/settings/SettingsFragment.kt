@@ -10,9 +10,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import pl.polsl.sensordatacollector.databinding.FragmentSettingsBinding
+import pl.polsl.sensordatacollector.preferences.ApplicationPreferences
 
 class SettingsFragment : Fragment() {
-
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
@@ -29,6 +29,7 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupSpinner()
+        loadData()
     }
 
     override fun onPause() {
@@ -42,68 +43,32 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupSpinner() {
-        val options = arrayOf("Group 1", "Group 2", "Group 3")
+        val options = arrayOf("Profile 1", "Profile 2", "Profile 3")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, options)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spGroup.adapter = adapter
-
-        binding.spGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                if (!isFirstLoad) {
-                    saveData()
-                }
-                loadData()
-                isFirstLoad = false
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // No action needed
-            }
-        }
-
-        loadSpinnerSelection()
+        binding.spProfile.adapter = adapter
     }
 
     private fun saveData() {
-        val sharedPreferences = requireActivity().getSharedPreferences("SensorDataCollector.Settings", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-
-        val selectedGroup = binding.spGroup.selectedItem.toString()
-        val groupKey = "data_$selectedGroup"
-
-        Log.d("SettingsFragment", "Saving data for group: $groupKey")
-
-        editor.putString("${groupKey}_database_address", binding.etDatabaseAddress.text.toString())
-        editor.putString("${groupKey}_database_name", binding.etDatabaseName.text.toString())
-        editor.putString("${groupKey}_database_login", binding.etDatabaseLogin.text.toString())
-        editor.putString("${groupKey}_database_password", binding.etDatabasePassword.text.toString())
-        editor.putString("${groupKey}_first_name", binding.etFirstName.text.toString())
-        editor.putString("${groupKey}_last_name", binding.etLastName.text.toString())
-        editor.putString("selected_group", selectedGroup)
-
-        editor.apply()
+        val applicationPreferences = ApplicationPreferences(requireActivity())
+        applicationPreferences.databaseAddress = binding.etDatabaseAddress.text.toString()
+        applicationPreferences.databaseName = binding.etDatabaseName.text.toString()
+        applicationPreferences.databaseLogin = binding.etDatabaseLogin.text.toString()
+        applicationPreferences.databasePassword = binding.etDatabasePassword.text.toString()
+        applicationPreferences.firstName = binding.etFirstName.text.toString()
+        applicationPreferences.lastName = binding.etLastName.text.toString()
+        applicationPreferences.profile = binding.spProfile.selectedItemPosition
+        applicationPreferences.save()
     }
 
     private fun loadData() {
-        val sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
-
-        val selectedGroup = binding.spGroup.selectedItem?.toString() ?: return
-        val groupKey = "data_$selectedGroup"
-
-        Log.d("NotificationsFragment", "Loading data for group: $groupKey")
-
-        binding.etDatabaseAddress.setText(sharedPreferences.getString("${groupKey}_database_address", ""))
-        binding.etDatabaseName.setText(sharedPreferences.getString("${groupKey}_database_name", ""))
-        binding.etDatabaseLogin.setText(sharedPreferences.getString("${groupKey}_database_login", ""))
-        binding.etDatabasePassword.setText(sharedPreferences.getString("${groupKey}_database_password", ""))
-        binding.etFirstName.setText(sharedPreferences.getString("${groupKey}_first_name", ""))
-        binding.etLastName.setText(sharedPreferences.getString("${groupKey}_last_name", ""))
-    }
-
-    private fun loadSpinnerSelection() {
-        val sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
-        val savedSelectedGroup = sharedPreferences.getString("selected_group", "")
-        val position = (binding.spGroup.adapter as ArrayAdapter<String>).getPosition(savedSelectedGroup)
-        binding.spGroup.setSelection(position)
+        val applicationPreferences = ApplicationPreferences(requireActivity())
+        binding.etDatabaseAddress.setText(applicationPreferences.databaseAddress)
+        binding.etDatabaseName.setText(applicationPreferences.databaseName)
+        binding.etDatabaseLogin.setText(applicationPreferences.databaseLogin)
+        binding.etDatabasePassword.setText(applicationPreferences.databasePassword)
+        binding.etFirstName.setText(applicationPreferences.firstName)
+        binding.etLastName.setText(applicationPreferences.lastName)
+        binding.spProfile.setSelection(applicationPreferences.profile)
     }
 }
