@@ -65,20 +65,20 @@ class SettingsFragment : Fragment() {
     }
 
     private fun saveData() {
-        val sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
+        val sharedPreferences = requireActivity().getSharedPreferences("SensorDataCollector.Settings", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
         val selectedGroup = binding.spGroup.selectedItem.toString()
         val groupKey = "data_$selectedGroup"
 
-        Log.d("NotificationsFragment", "Saving data for group: $groupKey")
+        Log.d("SettingsFragment", "Saving data for group: $groupKey")
 
         editor.putString("${groupKey}_database_address", binding.etDatabaseAddress.text.toString())
         editor.putString("${groupKey}_database_name", binding.etDatabaseName.text.toString())
-        editor.putString("${groupKey}_login", binding.etDatabaseLogin.text.toString())
-        editor.putString("${groupKey}_password", binding.etDatabasePassword.text.toString())
-        editor.putString("${groupKey}_name", binding.etFirstName.text.toString())
-        editor.putString("${groupKey}_surname", binding.etLastName.text.toString())
+        editor.putString("${groupKey}_database_login", binding.etDatabaseLogin.text.toString())
+        editor.putString("${groupKey}_database_password", binding.etDatabasePassword.text.toString())
+        editor.putString("${groupKey}_first_name", binding.etFirstName.text.toString())
+        editor.putString("${groupKey}_last_name", binding.etLastName.text.toString())
         editor.putString("selected_group", selectedGroup)
 
         editor.apply()
