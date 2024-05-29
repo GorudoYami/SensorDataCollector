@@ -4,7 +4,9 @@ import pl.polsl.sensordatacollector.data.sql.CreateTablesDDL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import pl.polsl.sensordatacollector.data.models.DataEntry
+import pl.polsl.sensordatacollector.data.sql.GetUserQuery
 import pl.polsl.sensordatacollector.data.sql.InsertDataCommand
+import pl.polsl.sensordatacollector.data.sql.InsertUserCommand
 import pl.polsl.sensordatacollector.data.sql.TableCountQuery
 import java.sql.Connection
 import java.sql.DriverManager
@@ -25,14 +27,14 @@ class Database(address: String, databaseName: String, user: String, password: St
 
     private fun getConnection(): Connection {
         val connection = DriverManager.getConnection("$_connectionString/$_databaseName", _user, _password)
-        if (!doTablesExist(connection)) {
+        if (!tablesExist(connection)) {
             createTables(connection)
         }
 
         return connection
     }
 
-    private fun doTablesExist(connection: Connection): Boolean {
+    private fun tablesExist(connection: Connection): Boolean {
         connection.createStatement().use { statement ->
             statement.executeQuery(TableCountQuery().getSql()).use { resultSet ->
                 if (resultSet.next()) {
@@ -58,6 +60,28 @@ class Database(address: String, databaseName: String, user: String, password: St
             getConnection().use { connection ->
                 connection.createStatement().use { statement ->
                     statement.execute(InsertDataCommand().getSql(dataEntries))
+                }
+            }
+        }
+    }
+
+    suspend fun insertUser(firstName: String, lastName: String) {
+        withContext(Dispatchers.IO) {
+            getConnection().use { connection ->
+                connection.createStatement().use { statement ->
+                    statement.execute(InsertUserCommand().getSql(firstName, lastName))
+                }
+            }
+        }
+    }
+
+    suspend fun userExists(firstName: String, lastName: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            getConnection().use { connection ->
+                connection.createStatement().use { statement ->
+                    statement.executeQuery(GetUserQuery().getSql(firstName, lastName)).use { resultSet ->
+                        resultSet.next()
+                    }
                 }
             }
         }

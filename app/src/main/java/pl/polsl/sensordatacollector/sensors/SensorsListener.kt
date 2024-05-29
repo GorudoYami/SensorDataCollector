@@ -41,7 +41,6 @@ class SensorsListener(private val sensorManager: SensorManager) : SensorEventLis
         }
     }
 
-
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
     }
 }
