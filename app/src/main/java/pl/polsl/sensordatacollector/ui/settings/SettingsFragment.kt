@@ -1,4 +1,4 @@
-package pl.polsl.sensordatacollector.ui.notifications
+package pl.polsl.sensordatacollector.ui.settings
 
 import android.content.Context
 import android.os.Bundle
@@ -8,14 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.Spinner
 import androidx.fragment.app.Fragment
-import pl.polsl.sensordatacollector.databinding.FragmentNotificationsBinding
+import pl.polsl.sensordatacollector.databinding.FragmentSettingsBinding
 
-class NotificationsFragment : Fragment() {
+class SettingsFragment : Fragment() {
 
-    private var _binding: FragmentNotificationsBinding? = null
+    private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
     private var isFirstLoad = true
@@ -24,7 +22,7 @@ class NotificationsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -47,9 +45,9 @@ class NotificationsFragment : Fragment() {
         val options = arrayOf("Group 1", "Group 2", "Group 3")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, options)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerGroup.adapter = adapter
+        binding.spGroup.adapter = adapter
 
-        binding.spinnerGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        binding.spGroup.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 if (!isFirstLoad) {
                     saveData()
@@ -70,17 +68,17 @@ class NotificationsFragment : Fragment() {
         val sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
 
-        val selectedGroup = binding.spinnerGroup.selectedItem.toString()
+        val selectedGroup = binding.spGroup.selectedItem.toString()
         val groupKey = "data_$selectedGroup"
 
         Log.d("NotificationsFragment", "Saving data for group: $groupKey")
 
-        editor.putString("${groupKey}_database_address", binding.editTextDatabaseAddress.text.toString())
-        editor.putString("${groupKey}_database_name", binding.editTextDatabaseName.text.toString())
-        editor.putString("${groupKey}_login", binding.editTextLogin.text.toString())
-        editor.putString("${groupKey}_password", binding.editTextPassword.text.toString())
-        editor.putString("${groupKey}_name", binding.editTextName.text.toString())
-        editor.putString("${groupKey}_surname", binding.editTextSurname.text.toString())
+        editor.putString("${groupKey}_database_address", binding.etDatabaseAddress.text.toString())
+        editor.putString("${groupKey}_database_name", binding.etDatabaseName.text.toString())
+        editor.putString("${groupKey}_login", binding.etDatabaseLogin.text.toString())
+        editor.putString("${groupKey}_password", binding.etDatabasePassword.text.toString())
+        editor.putString("${groupKey}_name", binding.etFirstName.text.toString())
+        editor.putString("${groupKey}_surname", binding.etLastName.text.toString())
         editor.putString("selected_group", selectedGroup)
 
         editor.apply()
@@ -89,23 +87,23 @@ class NotificationsFragment : Fragment() {
     private fun loadData() {
         val sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
 
-        val selectedGroup = binding.spinnerGroup.selectedItem?.toString() ?: return
+        val selectedGroup = binding.spGroup.selectedItem?.toString() ?: return
         val groupKey = "data_$selectedGroup"
 
         Log.d("NotificationsFragment", "Loading data for group: $groupKey")
 
-        binding.editTextDatabaseAddress.setText(sharedPreferences.getString("${groupKey}_database_address", ""))
-        binding.editTextDatabaseName.setText(sharedPreferences.getString("${groupKey}_database_name", ""))
-        binding.editTextLogin.setText(sharedPreferences.getString("${groupKey}_login", ""))
-        binding.editTextPassword.setText(sharedPreferences.getString("${groupKey}_password", ""))
-        binding.editTextName.setText(sharedPreferences.getString("${groupKey}_name", ""))
-        binding.editTextSurname.setText(sharedPreferences.getString("${groupKey}_surname", ""))
+        binding.etDatabaseAddress.setText(sharedPreferences.getString("${groupKey}_database_address", ""))
+        binding.etDatabaseName.setText(sharedPreferences.getString("${groupKey}_database_name", ""))
+        binding.etDatabaseLogin.setText(sharedPreferences.getString("${groupKey}_database_login", ""))
+        binding.etDatabasePassword.setText(sharedPreferences.getString("${groupKey}_database_password", ""))
+        binding.etFirstName.setText(sharedPreferences.getString("${groupKey}_first_name", ""))
+        binding.etLastName.setText(sharedPreferences.getString("${groupKey}_last_name", ""))
     }
 
     private fun loadSpinnerSelection() {
         val sharedPreferences = requireActivity().getSharedPreferences("MySharedPref", Context.MODE_PRIVATE)
         val savedSelectedGroup = sharedPreferences.getString("selected_group", "")
-        val position = (binding.spinnerGroup.adapter as ArrayAdapter<String>).getPosition(savedSelectedGroup)
-        binding.spinnerGroup.setSelection(position)
+        val position = (binding.spGroup.adapter as ArrayAdapter<String>).getPosition(savedSelectedGroup)
+        binding.spGroup.setSelection(position)
     }
 }
