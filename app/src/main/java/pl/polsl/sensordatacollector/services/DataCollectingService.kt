@@ -12,23 +12,48 @@ import pl.polsl.sensordatacollector.sensors.SensorsListener
 import kotlin.concurrent.Volatile
 import kotlinx.coroutines.*
 import pl.polsl.sensordatacollector.preferences.ApplicationPreferences
+import java.lang.Exception
 import java.sql.SQLException
 
 class DataCollectingService : Service() {
-    private val _settingsName = "SensorDataCollector.Settings"
-
     @Volatile private var _run = false
     private lateinit var _sensorsListener: SensorsListener
     private lateinit var _database: Database
+    private var _userId: Int = 0
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        initialize()
+        val applicationPreferences = ApplicationPreferences(this)
+        initialize(applicationPreferences)
 
         GlobalScope.launch(Dispatchers.IO) {
+            runBlocking {
+                try {
+                _userId =
+                    if (!_database.userExists(
+                            applicationPreferences.firstName,
+                            applicationPreferences.lastName
+                        )
+                    ) {
+                        _database.insertUser(
+                            applicationPreferences.firstName,
+                            applicationPreferences.lastName
+                        )
+                    } else {
+                        _database.getUser(
+                            applicationPreferences.firstName,
+                            applicationPreferences.lastName
+                        )!!
+                    }
+                }
+                catch(ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+
             while (_run) {
                 try {
                     val dataEntries = _sensorsListener.getValues().map { sensorValue ->
@@ -37,11 +62,10 @@ class DataCollectingService : Service() {
                             DataEntry(
                                 0,
                                 sensorValue.sensorId,
-                                1,
                                 sensorValue.timestamp,
                                 i++,
                                 value,
-                                1
+                                _userId
                             )
                         }
                     }.flatten()
@@ -63,14 +87,13 @@ class DataCollectingService : Service() {
         return START_STICKY
     }
 
-    private fun initialize() {
-        initializeDatabase()
+    private fun initialize(applicationPreferences: ApplicationPreferences) {
+        initializeDatabase(applicationPreferences)
         initializeSensorsListener()
         _run = true
     }
 
-    private fun initializeDatabase() {
-        val applicationPreferences = ApplicationPreferences(this)
+    private fun initializeDatabase(applicationPreferences: ApplicationPreferences) {
         _database = Database(
             applicationPreferences.databaseAddress,
             applicationPreferences.databaseName,

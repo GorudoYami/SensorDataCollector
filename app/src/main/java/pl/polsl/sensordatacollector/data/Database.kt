@@ -65,7 +65,19 @@ class Database(address: String, databaseName: String, user: String, password: St
         }
     }
 
-    suspend fun insertUser(firstName: String, lastName: String) {
+    suspend fun getUser(firstName: String, lastName: String): Int? {
+        return withContext(Dispatchers.IO) {
+            getConnection().use { connection ->
+                connection.createStatement().use { statement ->
+                    statement.executeQuery(GetUserQuery().getSql(firstName, lastName)).use { resultSet ->
+                        if (resultSet.next()) resultSet.getInt("id") else null
+                    }
+                }
+            }
+        }
+    }
+
+    suspend fun insertUser(firstName: String, lastName: String): Int {
         withContext(Dispatchers.IO) {
             getConnection().use { connection ->
                 connection.createStatement().use { statement ->
@@ -73,17 +85,11 @@ class Database(address: String, databaseName: String, user: String, password: St
                 }
             }
         }
+
+        return getUser(firstName, lastName)!!
     }
 
     suspend fun userExists(firstName: String, lastName: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            getConnection().use { connection ->
-                connection.createStatement().use { statement ->
-                    statement.executeQuery(GetUserQuery().getSql(firstName, lastName)).use { resultSet ->
-                        resultSet.next()
-                    }
-                }
-            }
-        }
+        return getUser(firstName, lastName) != null
     }
 }
