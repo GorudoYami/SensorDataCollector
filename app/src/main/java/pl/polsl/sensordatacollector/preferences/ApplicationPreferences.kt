@@ -18,12 +18,12 @@ class ApplicationPreferences(context: Context) {
     init {
         profile = _preferences.getInt("profile", 0)
         Log.d(this::class.simpleName, "Loading profile $profile")
-        databaseAddress = _preferences.getString("${profile}_databaseAddress", "").toString()
-        databaseLogin = _preferences.getString("${profile}_databaseLogin", "").toString()
+        databaseAddress = _preferences.getString("${profile}_databaseAddress", "").toString().trim()
+        databaseLogin = _preferences.getString("${profile}_databaseLogin", "").toString().trim()
         databasePassword = _preferences.getString("${profile}_databasePassword", "").toString()
-        databaseName = _preferences.getString("${profile}_databaseName", "").toString()
-        firstName = _preferences.getString("${profile}_firstName", "").toString()
-        lastName = _preferences.getString("${profile}_lastName", "").toString()
+        databaseName = _preferences.getString("${profile}_databaseName", "").toString().trim()
+        firstName = _preferences.getString("${profile}_firstName", "").toString().trim()
+        lastName = _preferences.getString("${profile}_lastName", "").toString().trim()
     }
 
     fun save() {

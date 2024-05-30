@@ -12,6 +12,7 @@ class SensorsListener(private val sensorManager: SensorManager) : SensorEventLis
     private val _sensorDelay = SensorManager.SENSOR_DELAY_NORMAL
     private val _sensorTypes = listOf(Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE, Sensor.TYPE_MAGNETIC_FIELD, Sensor.TYPE_LIGHT)
     private val _data: MutableList<SensorDataEntry> = mutableListOf()
+
     fun start() {
         for (sensorType in _sensorTypes) {
             val sensor = sensorManager.getDefaultSensor(sensorType)
