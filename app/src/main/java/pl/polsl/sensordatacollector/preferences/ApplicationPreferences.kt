@@ -1,6 +1,7 @@
 package pl.polsl.sensordatacollector.preferences
 
 import android.content.Context
+import android.util.Log
 
 class ApplicationPreferences(context: Context) {
     var profile: Int
@@ -16,6 +17,7 @@ class ApplicationPreferences(context: Context) {
 
     init {
         profile = _preferences.getInt("profile", 0)
+        Log.d(this::class.simpleName, "Loading profile $profile")
         databaseAddress = _preferences.getString("${profile}_databaseAddress", "").toString()
         databaseLogin = _preferences.getString("${profile}_databaseLogin", "").toString()
         databasePassword = _preferences.getString("${profile}_databasePassword", "").toString()
@@ -25,6 +27,7 @@ class ApplicationPreferences(context: Context) {
     }
 
     fun save() {
+        Log.d(this::class.simpleName, "Saving profile $profile")
         val editor = _preferences.edit()
         editor.putString("${profile}_databaseAddress", databaseAddress)
         editor.putString("${profile}_databaseLogin", databaseLogin)

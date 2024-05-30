@@ -1,13 +1,13 @@
 package pl.polsl.sensordatacollector.ui.settings
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import pl.polsl.sensordatacollector.databinding.FragmentSettingsBinding
 import pl.polsl.sensordatacollector.preferences.ApplicationPreferences
@@ -15,8 +15,7 @@ import pl.polsl.sensordatacollector.preferences.ApplicationPreferences
 class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
-
-    private var isFirstLoad = true
+    private lateinit var _spProfile: Spinner
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,10 +42,26 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupSpinner() {
+        _spProfile = binding.spProfile
         val options = arrayOf("Profile 1", "Profile 2", "Profile 3")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, options)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spProfile.adapter = adapter
+        _spProfile.adapter = adapter
+        _spProfile.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                saveData()
+            }
+            _spProfile.performClick()
+        }
+
+        _spProfile.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                loadData()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
     }
 
     private fun saveData() {

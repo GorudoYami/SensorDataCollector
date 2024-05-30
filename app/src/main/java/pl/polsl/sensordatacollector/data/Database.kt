@@ -1,5 +1,6 @@
 package pl.polsl.sensordatacollector.data
 
+import android.util.Log
 import pl.polsl.sensordatacollector.data.sql.CreateTablesDDL
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -13,8 +14,7 @@ import java.sql.DriverManager
 import java.sql.SQLException
 
 class Database(address: String, databaseName: String, user: String, password: String) {
-    private val _connectionString: String = "jdbc:mysql://$address"
-    private val _databaseName: String = databaseName
+    private val _connectionString: String = "jdbc:mysql://$address/$databaseName"
     private val _user: String = user
     private val _password: String = password
 
@@ -26,7 +26,8 @@ class Database(address: String, databaseName: String, user: String, password: St
     }
 
     private fun getConnection(): Connection {
-        val connection = DriverManager.getConnection("$_connectionString/$_databaseName", _user, _password)
+        Log.d("Database", "Connecting to $_connectionString as $_user")
+        val connection = DriverManager.getConnection(_connectionString, _user, _password)
         if (!tablesExist(connection)) {
             createTables(connection)
         }

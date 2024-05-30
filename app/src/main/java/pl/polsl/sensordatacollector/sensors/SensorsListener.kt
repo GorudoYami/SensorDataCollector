@@ -37,7 +37,6 @@ class SensorsListener(private val sensorManager: SensorManager) : SensorEventLis
     override fun onSensorChanged(event: SensorEvent?) {
         if (event != null) {
             _data.add(SensorDataEntry(event.sensor.type, Instant.now().toEpochMilli() / 1000, event.values))
-            Log.d("SensorData",  "${event.sensor.type}: ${event.values.joinToString(separator = ", ")}")
         }
     }
 
