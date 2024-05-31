@@ -2,8 +2,6 @@ package pl.polsl.sensordatacollector.data
 
 import android.util.Log
 import pl.polsl.sensordatacollector.data.sql.CreateTablesDDL
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import pl.polsl.sensordatacollector.data.models.DataEntry
 import pl.polsl.sensordatacollector.data.sql.GetUserQuery
 import pl.polsl.sensordatacollector.data.sql.InsertDataCommand
@@ -19,10 +17,8 @@ class Database(address: String, databaseName: String, user: String, password: St
     private val _password: String = password
 
     @Throws(SQLException::class)
-    suspend fun checkConnection() {
-        withContext(Dispatchers.IO) {
-            getConnection().use {  }
-        }
+    fun checkConnection() {
+        getConnection().use {  }
     }
 
     private fun getConnection(): Connection {
@@ -56,41 +52,35 @@ class Database(address: String, databaseName: String, user: String, password: St
         }
     }
 
-    suspend fun insertDataEntries(dataEntries: Collection<DataEntry>) {
-        withContext(Dispatchers.IO) {
-            getConnection().use { connection ->
-                connection.createStatement().use { statement ->
-                    statement.execute(InsertDataCommand().getSql(dataEntries))
+    fun insertDataEntries(dataEntries: Collection<DataEntry>) {
+        getConnection().use { connection ->
+            connection.createStatement().use { statement ->
+                statement.execute(InsertDataCommand().getSql(dataEntries))
+            }
+        }
+    }
+
+    fun getUser(firstName: String, lastName: String): Int? {
+        return getConnection().use { connection ->
+            connection.createStatement().use { statement ->
+                statement.executeQuery(GetUserQuery().getSql(firstName, lastName)).use { resultSet ->
+                    if (resultSet.next()) resultSet.getInt("id") else null
                 }
             }
         }
     }
 
-    suspend fun getUser(firstName: String, lastName: String): Int? {
-        return withContext(Dispatchers.IO) {
-            getConnection().use { connection ->
-                connection.createStatement().use { statement ->
-                    statement.executeQuery(GetUserQuery().getSql(firstName, lastName)).use { resultSet ->
-                        if (resultSet.next()) resultSet.getInt("id") else null
-                    }
-                }
-            }
-        }
-    }
-
-    suspend fun insertUser(firstName: String, lastName: String): Int {
-        withContext(Dispatchers.IO) {
-            getConnection().use { connection ->
-                connection.createStatement().use { statement ->
-                    statement.execute(InsertUserCommand().getSql(firstName, lastName))
-                }
+    fun insertUser(firstName: String, lastName: String): Int {
+        getConnection().use { connection ->
+            connection.createStatement().use { statement ->
+                statement.execute(InsertUserCommand().getSql(firstName, lastName))
             }
         }
 
         return getUser(firstName, lastName)!!
     }
 
-    suspend fun userExists(firstName: String, lastName: String): Boolean {
+    fun userExists(firstName: String, lastName: String): Boolean {
         return getUser(firstName, lastName) != null
     }
 }

@@ -1,11 +1,9 @@
 package pl.polsl.sensordatacollector.services
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.hardware.SensorManager
 import android.os.IBinder
-import android.provider.ContactsContract.Data
 import pl.polsl.sensordatacollector.data.Database
 import pl.polsl.sensordatacollector.data.models.DataEntry
 import pl.polsl.sensordatacollector.sensors.SensorsListener
@@ -30,8 +28,7 @@ class DataCollectingService : Service() {
         initialize(applicationPreferences)
 
         GlobalScope.launch(Dispatchers.IO) {
-            runBlocking {
-                try {
+            try {
                 _userId =
                     if (!_database.userExists(
                             applicationPreferences.firstName,
@@ -48,10 +45,9 @@ class DataCollectingService : Service() {
                             applicationPreferences.lastName
                         )!!
                     }
-                }
-                catch(ex: Exception) {
-                    ex.printStackTrace()
-                }
+            }
+            catch(ex: Exception) {
+                ex.printStackTrace()
             }
 
             while (_run) {
@@ -70,11 +66,9 @@ class DataCollectingService : Service() {
                         }
                     }.flatten()
 
-                    runBlocking {
-                        _database.insertDataEntries(dataEntries)
-                    }
-
+                    _database.insertDataEntries(dataEntries)
                     _sensorsListener.clearValues()
+
                     Thread.sleep(5000)
                 } catch (ex: SQLException) {
                     ex.printStackTrace()

@@ -4,14 +4,14 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.util.Log
 import pl.polsl.sensordatacollector.data.models.SensorDataEntry
 import java.time.Instant
+import java.util.concurrent.CopyOnWriteArrayList
 
 class SensorsListener(private val sensorManager: SensorManager) : SensorEventListener {
     private val _sensorDelay = SensorManager.SENSOR_DELAY_NORMAL
     private val _sensorTypes = listOf(Sensor.TYPE_ACCELEROMETER, Sensor.TYPE_GYROSCOPE, Sensor.TYPE_MAGNETIC_FIELD, Sensor.TYPE_LIGHT)
-    private val _data: MutableList<SensorDataEntry> = mutableListOf()
+    private val _data: CopyOnWriteArrayList<SensorDataEntry> = CopyOnWriteArrayList()
 
     fun start() {
         for (sensorType in _sensorTypes) {
