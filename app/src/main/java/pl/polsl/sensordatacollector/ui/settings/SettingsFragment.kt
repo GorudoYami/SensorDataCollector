@@ -2,7 +2,6 @@ package pl.polsl.sensordatacollector.ui.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
@@ -16,6 +15,7 @@ class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
     private lateinit var _spProfile: Spinner
+    private var _previousProfile: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,12 +28,12 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupSpinner()
-        loadData()
+        loadData(_previousProfile)
     }
 
     override fun onPause() {
         super.onPause()
-        saveData()
+        saveData(_previousProfile)
     }
 
     override fun onDestroyView() {
@@ -47,16 +47,12 @@ class SettingsFragment : Fragment() {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, options)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         _spProfile.adapter = adapter
-        _spProfile.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                saveData()
-            }
-            _spProfile.performClick()
-        }
 
         _spProfile.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                loadData()
+                saveData(_previousProfile)
+                loadData(position)
+                _previousProfile = position
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -64,26 +60,25 @@ class SettingsFragment : Fragment() {
         }
     }
 
-    private fun saveData() {
-        val applicationPreferences = ApplicationPreferences(requireActivity())
+    private fun saveData(profile: Int) {
+        val applicationPreferences = ApplicationPreferences(requireActivity(), profile)
         applicationPreferences.databaseAddress = binding.etDatabaseAddress.text.toString()
         applicationPreferences.databaseName = binding.etDatabaseName.text.toString()
         applicationPreferences.databaseLogin = binding.etDatabaseLogin.text.toString()
         applicationPreferences.databasePassword = binding.etDatabasePassword.text.toString()
         applicationPreferences.firstName = binding.etFirstName.text.toString()
         applicationPreferences.lastName = binding.etLastName.text.toString()
-        applicationPreferences.profile = binding.spProfile.selectedItemPosition
         applicationPreferences.save()
     }
 
-    private fun loadData() {
-        val applicationPreferences = ApplicationPreferences(requireActivity())
+    private fun loadData(profile: Int) {
+        val applicationPreferences = ApplicationPreferences(requireActivity(), profile)
         binding.etDatabaseAddress.setText(applicationPreferences.databaseAddress)
         binding.etDatabaseName.setText(applicationPreferences.databaseName)
         binding.etDatabaseLogin.setText(applicationPreferences.databaseLogin)
         binding.etDatabasePassword.setText(applicationPreferences.databasePassword)
         binding.etFirstName.setText(applicationPreferences.firstName)
         binding.etLastName.setText(applicationPreferences.lastName)
-        binding.spProfile.setSelection(applicationPreferences.profile)
+        binding.spProfile.setSelection(profile)
     }
 }

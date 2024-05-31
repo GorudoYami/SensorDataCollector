@@ -3,8 +3,8 @@ package pl.polsl.sensordatacollector.preferences
 import android.content.Context
 import android.util.Log
 
-class ApplicationPreferences(context: Context) {
-    var profile: Int
+class ApplicationPreferences(context: Context, loadProfile: Int? = null) {
+    var profile: Int? = loadProfile
     var databaseAddress: String
     var databaseLogin: String
     var databasePassword: String
@@ -16,7 +16,7 @@ class ApplicationPreferences(context: Context) {
     private val _preferences = context.getSharedPreferences(_preferencesName, Context.MODE_PRIVATE)
 
     init {
-        profile = _preferences.getInt("profile", 0)
+        profile = profile ?: _preferences.getInt("profile", 0)
         Log.d(this::class.simpleName, "Loading profile $profile")
         databaseAddress = _preferences.getString("${profile}_databaseAddress", "").toString().trim()
         databaseLogin = _preferences.getString("${profile}_databaseLogin", "").toString().trim()
@@ -35,7 +35,7 @@ class ApplicationPreferences(context: Context) {
         editor.putString("${profile}_databaseName", databaseName)
         editor.putString("${profile}_firstName", firstName)
         editor.putString("${profile}_lastName", lastName)
-        editor.putInt("profile", profile)
+        editor.putInt("profile", profile!!)
         editor.apply()
     }
 }
