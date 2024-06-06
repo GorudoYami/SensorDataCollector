@@ -16,11 +16,6 @@ class Database(address: String, databaseName: String, user: String, password: St
     private val _user: String = user
     private val _password: String = password
 
-    @Throws(SQLException::class)
-    fun checkConnection() {
-        getConnection().use {  }
-    }
-
     private fun getConnection(): Connection {
         Log.d("Database", "Connecting to $_connectionString as $_user")
         val connection = DriverManager.getConnection(_connectionString, _user, _password)

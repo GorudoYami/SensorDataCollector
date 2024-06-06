@@ -24,7 +24,6 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var isListening = false
-    private lateinit var listener: SensorsListener
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,8 +36,6 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        listener = SensorsListener(requireContext().getSystemService(SensorManager::class.java))
-
         val button: Button = binding.button
         button.setBackgroundColor(Color.parseColor("#00FF00"))
         button.setText("START")
@@ -47,12 +44,10 @@ class HomeFragment : Fragment() {
             if (isListening) {
                 button.setBackgroundColor(Color.parseColor("#00FF00"))
                 button.setText("START")
-                listener.stop()
                 stopService()
             } else {
                 button.setBackgroundColor(Color.parseColor("#FF0000"))
                 button.setText("STOP")
-                listener.start()
                 startService()
             }
             isListening = !isListening
